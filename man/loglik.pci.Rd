@@ -9,7 +9,7 @@ Computes the log likelihood of a partially cointegrated model
 \usage{
 loglik.pci(Y, X, alpha, beta, rho, sigma_M, sigma_R, 
   M0 = 0, R0 = 0, 
-  calc_method = c("css", "fkf", "ss", "sst", "csst"), 
+  calc_method = c("css", "kfas", "ss", "sst", "csst"), 
   nu = pci.nu.default())
 }
 %- maybe also 'usage' for other objects documented here.
@@ -47,7 +47,7 @@ The initial value of the random walk component.  Default = 0.
 \itemize{
 \item "ss" Steady-state Kalman filter
 \item "css" C++ implementation of steady-state Kalman filter 
-\item "fkf" Kalman filter implementation of the FKF package
+\item "kfas" Kalman filter implementation of the KFAS package
 \item "sst" Steady-state Kalman filter using t-distributed innovations
 \item "csst" C++ implementation of steady-state Kalman filter using t-distributed innovations
 }

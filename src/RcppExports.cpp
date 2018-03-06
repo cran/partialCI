@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // lagged_variance_c
 double lagged_variance_c(NumericVector X, int k, int n);
-RcppExport SEXP partialCI_lagged_variance_c(SEXP XSEXP, SEXP kSEXP, SEXP nSEXP) {
+RcppExport SEXP _partialCI_lagged_variance_c(SEXP XSEXP, SEXP kSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -20,7 +20,7 @@ END_RCPP
 }
 // estimate_rho_par_c
 double estimate_rho_par_c(NumericVector X);
-RcppExport SEXP partialCI_estimate_rho_par_c(SEXP XSEXP) {
+RcppExport SEXP _partialCI_estimate_rho_par_c(SEXP XSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -31,7 +31,7 @@ END_RCPP
 }
 // estimate_par_c
 NumericVector estimate_par_c(NumericVector X, double rho_max);
-RcppExport SEXP partialCI_estimate_par_c(SEXP XSEXP, SEXP rho_maxSEXP) {
+RcppExport SEXP _partialCI_estimate_par_c(SEXP XSEXP, SEXP rho_maxSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -43,7 +43,7 @@ END_RCPP
 }
 // pvmr_par_c
 double pvmr_par_c(double rho, double sigma_M, double sigma_R);
-RcppExport SEXP partialCI_pvmr_par_c(SEXP rhoSEXP, SEXP sigma_MSEXP, SEXP sigma_RSEXP) {
+RcppExport SEXP _partialCI_pvmr_par_c(SEXP rhoSEXP, SEXP sigma_MSEXP, SEXP sigma_RSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -56,7 +56,7 @@ END_RCPP
 }
 // kalman_gain_par_mr
 double kalman_gain_par_mr(double rho, double sigma_M, double sigma_R);
-RcppExport SEXP partialCI_kalman_gain_par_mr(SEXP rhoSEXP, SEXP sigma_MSEXP, SEXP sigma_RSEXP) {
+RcppExport SEXP _partialCI_kalman_gain_par_mr(SEXP rhoSEXP, SEXP sigma_MSEXP, SEXP sigma_RSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -69,7 +69,7 @@ END_RCPP
 }
 // loglik_par_c
 double loglik_par_c(NumericVector Y, double rho, double sigma_M, double sigma_R, double M0, double R0);
-RcppExport SEXP partialCI_loglik_par_c(SEXP YSEXP, SEXP rhoSEXP, SEXP sigma_MSEXP, SEXP sigma_RSEXP, SEXP M0SEXP, SEXP R0SEXP) {
+RcppExport SEXP _partialCI_loglik_par_c(SEXP YSEXP, SEXP rhoSEXP, SEXP sigma_MSEXP, SEXP sigma_RSEXP, SEXP M0SEXP, SEXP R0SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -85,7 +85,7 @@ END_RCPP
 }
 // loglik_par_t_c
 double loglik_par_t_c(NumericVector Y, double rho, double sigma_M, double sigma_R, double M0, double R0, double nu);
-RcppExport SEXP partialCI_loglik_par_t_c(SEXP YSEXP, SEXP rhoSEXP, SEXP sigma_MSEXP, SEXP sigma_RSEXP, SEXP M0SEXP, SEXP R0SEXP, SEXP nuSEXP) {
+RcppExport SEXP _partialCI_loglik_par_t_c(SEXP YSEXP, SEXP rhoSEXP, SEXP sigma_MSEXP, SEXP sigma_RSEXP, SEXP M0SEXP, SEXP R0SEXP, SEXP nuSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;

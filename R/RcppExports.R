@@ -2,30 +2,30 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 lagged_variance_c <- function(X, k, n) {
-    .Call('partialCI_lagged_variance_c', PACKAGE = 'partialCI', X, k, n)
+    .Call(`_partialCI_lagged_variance_c`, X, k, n)
 }
 
 estimate_rho_par_c <- function(X) {
-    .Call('partialCI_estimate_rho_par_c', PACKAGE = 'partialCI', X)
+    .Call(`_partialCI_estimate_rho_par_c`, X)
 }
 
 estimate_par_c <- function(X, rho_max = 1.0) {
-    .Call('partialCI_estimate_par_c', PACKAGE = 'partialCI', X, rho_max)
+    .Call(`_partialCI_estimate_par_c`, X, rho_max)
 }
 
 pvmr_par_c <- function(rho, sigma_M, sigma_R) {
-    .Call('partialCI_pvmr_par_c', PACKAGE = 'partialCI', rho, sigma_M, sigma_R)
+    .Call(`_partialCI_pvmr_par_c`, rho, sigma_M, sigma_R)
 }
 
 kalman_gain_par_mr <- function(rho, sigma_M, sigma_R) {
-    .Call('partialCI_kalman_gain_par_mr', PACKAGE = 'partialCI', rho, sigma_M, sigma_R)
+    .Call(`_partialCI_kalman_gain_par_mr`, rho, sigma_M, sigma_R)
 }
 
 loglik_par_c <- function(Y, rho, sigma_M, sigma_R, M0, R0) {
-    .Call('partialCI_loglik_par_c', PACKAGE = 'partialCI', Y, rho, sigma_M, sigma_R, M0, R0)
+    .Call(`_partialCI_loglik_par_c`, Y, rho, sigma_M, sigma_R, M0, R0)
 }
 
 loglik_par_t_c <- function(Y, rho, sigma_M, sigma_R, M0, R0, nu = 5.0) {
-    .Call('partialCI_loglik_par_t_c', PACKAGE = 'partialCI', Y, rho, sigma_M, sigma_R, M0, R0, nu)
+    .Call(`_partialCI_loglik_par_t_c`, Y, rho, sigma_M, sigma_R, M0, R0, nu)
 }
 

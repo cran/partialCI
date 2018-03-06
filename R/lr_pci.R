@@ -1,3 +1,4 @@
+
 # Functions for computing likelihoods, likelihood ratios and likelihood ratio
 # tests for partially cointegrated (PCI) series
 
@@ -27,36 +28,29 @@ par.nu.default <- function () {
   5
 }
 
-
-loglik.par.fkf <- function (Y, rho, sigma_M, sigma_R, M0=0, R0=Y[1]) {
+loglik.par.kfas <- function (Y, rho, sigma_M, sigma_R, M0=0, R0=Y[1]) {
   # Given a sequence Y and a parameterization (rho, sigma_M, sigma_R) of an
   # associated PAR process, calculates the negative log likelihood that
   # Y would be observed under these process parameters.  
   
   if (length(Y) < 1) return(NA_real_)
   if (length(dim(Y)) > 0) Y <- Y[,1]
-  Y <- coredata(Y)
+  Y <- zoo::coredata(Y)
   
-  M0 <- as.numeric(M0)
-  R0 <- as.numeric(R0)
-  
-  a0 <- c(M0, R0)
-  dt <- matrix(0, 2, 1)
-  ct <- matrix(0, 1, 1)
   Zt <- matrix(c(1, 1), 1, 2)
-  GGt <- matrix(0, 1, 1)
-  P0 <- matrix(c(sigma_M^2, 0, 0, sigma_R^2), 2, 2)
-  Tt <- matrix(c(rho, 0, 0, 1), 2, 2)
-  HHt <- matrix(c(sigma_M^2, 0, 0,sigma_R^2), 2, 2)
+  Ht <- matrix(c(0), 1, 1)
+  Tt <- matrix(c(rho, 0, 0, 1), 2, 2, byrow = TRUE)
+  Rt <- matrix(c(1, 0, 0, 1), ncol=2, nrow=2, byrow = TRUE)
+  a1 <- matrix(c(M0, R0), 2, 1)
+  Qt <- matrix(c(sigma_M^2, 0, 0 , sigma_R^2), 2, 2)
+  P1 <- matrix(c(sigma_M^2, 0, 0, sigma_R^2), 2, 2,byrow = TRUE)
+  P1inf<-matrix(c(0, 0, 0, 0), 2, 2,byrow = TRUE)
+  model_par<-KFAS::SSModel(Y ~ -1 + KFAS::SSMcustom(Z = Zt, T = Tt, Q = Qt, a1 = a1, P1 = P1,
+                                                   P1inf = P1inf), H = Ht)
   
-  sp <- list(a0 = a0, P0 = P0, ct = ct, dt = dt, Zt = Zt, Tt = Tt, 
-             GGt = GGt, HHt=HHt)
+  res<- (-1)*logLik(model_par, check.model = FALSE, convtol = 1e-08)
+  return(res)
   
-  ans <- fkf(a0 = sp$a0, P0 = sp$P0, dt = sp$dt, ct = sp$ct, Tt = sp$Tt,
-             Zt = sp$Zt, HHt = sp$HHt, GGt = sp$GGt, yt = rbind(Y))
-  
-  #    cat("Kalman gain = ", ans$Kt, "\n")         
-  -ans$logLik 
 }
 
 loglik.par.ss <- function (Y, rho, sigma_M, sigma_R, M0=0, R0=Y[1]) {
@@ -172,7 +166,7 @@ loglik.par.ss.t <- function (Y, rho, sigma_M, sigma_R, M0=0, R0=Y[1], nu=par.nu.
 
 
 
-loglik.pci.fkf <- function (Y, X, alpha, beta, rho, sigma_M, sigma_R, M0=0, R0=0) {
+loglik.pci.kfas<- function (Y, X, alpha, beta, rho, sigma_M, sigma_R, M0=0, R0=0) {
     # Given a sequence Y, a basis X, and a parameterization 
     # (beta, rho, sigma_M, sigma_R) of an
     # associated PCI process, calculates the negative log likelihood that
@@ -184,7 +178,7 @@ loglik.pci.fkf <- function (Y, X, alpha, beta, rho, sigma_M, sigma_R, M0=0, R0=0
       Z <- as.numeric(Y - X %*% beta - alpha)
     }
     if (missing(R0)) R0 <- Z[1]
-    loglik.par.fkf (Z, rho, sigma_M, sigma_R, M0, R0)
+    loglik.par.kfas (Z, rho, sigma_M, sigma_R, M0, R0)
 }
 
 loglik.pci.ss <- function (Y, X, alpha, beta, rho, sigma_M, sigma_R, M0=0, R0=0) {
@@ -252,17 +246,17 @@ loglik.pci.csst <- function (Y, X, alpha, beta, rho, sigma_M, sigma_R, M0=0, R0=
 }
 
 loglik.pci <- function (Y, X, alpha, beta, rho, sigma_M, sigma_R, M0=0, R0=0, 
-    calc_method=c("css", "fkf", "ss", "sst", "csst"), nu=pci.nu.default()) {
+    calc_method=c("css", "kfas", "ss", "sst", "csst"), nu=pci.nu.default()) {
     # Given a sequence Y, basis X, and a parameterization (beta, rho, sigma_M, sigma_R) of an
     # associated PCI process, calculates the negative log likelihood that
     # Y would be observed under these process parameters.  The method used
     # for calculating the log likelihood is determined by "par_method":
-    #   fkf:  Uses the Fast Kalman Filter (fkf) package
+    #   kfas:  Uses the Fast Kalman Filter (KFAS) package
     #   ss:   Uses a steady state Kalman filter
     #   css:  Uses a steady state Kalman filter coded in C
     
     switch(match.arg(calc_method),
-      fkf=loglik.pci.fkf(Y, X, alpha, beta, rho, sigma_M, sigma_R, M0, R0),
+      kfas=loglik.pci.kfas(Y, X, alpha, beta, rho, sigma_M, sigma_R, M0, R0),
       ss=loglik.pci.ss(Y, X, alpha, beta, rho, sigma_M, sigma_R, M0, R0),
       css=loglik.pci.css(Y, X, alpha, beta, rho, sigma_M, sigma_R, M0, R0),
       sst=loglik.pci.sst(Y, X, alpha, beta, rho, sigma_M, sigma_R, M0, R0, nu=nu),

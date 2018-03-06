@@ -5,22 +5,24 @@
 
 #include <R_ext/Rdynload.h>
 
-SEXP partialCI_lagged_variance_c(SEXP XSEXP, SEXP kSEXP, SEXP nSEXP);
-SEXP partialCI_estimate_rho_par_c(SEXP XSEXP);
-SEXP partialCI_estimate_par_c(SEXP XSEXP, SEXP rho_maxSEXP);
-SEXP partialCI_pvmr_par_c(SEXP rhoSEXP, SEXP sigma_MSEXP, SEXP sigma_RSEXP);
-SEXP partialCI_kalman_gain_par_mr(SEXP rhoSEXP, SEXP sigma_MSEXP, SEXP sigma_RSEXP);
-SEXP partialCI_loglik_par_c(SEXP YSEXP, SEXP rhoSEXP, SEXP sigma_MSEXP, SEXP sigma_RSEXP, SEXP M0SEXP, SEXP R0SEXP);
-SEXP partialCI_loglik_par_t_c(SEXP YSEXP, SEXP rhoSEXP, SEXP sigma_MSEXP, SEXP sigma_RSEXP, SEXP M0SEXP, SEXP R0SEXP, SEXP nuSEXP);
+SEXP _partialCI_lagged_variance_c(SEXP XSEXP, SEXP kSEXP, SEXP nSEXP);
+SEXP _partialCI_estimate_rho_par_c(SEXP XSEXP);
+SEXP _partialCI_estimate_par_c(SEXP XSEXP, SEXP rho_maxSEXP);
+SEXP _partialCI_pvmr_par_c(SEXP rhoSEXP, SEXP sigma_MSEXP, SEXP sigma_RSEXP);
+SEXP _partialCI_kalman_gain_par_mr(SEXP rhoSEXP, SEXP sigma_MSEXP, SEXP sigma_RSEXP);
+SEXP _partialCI_loglik_par_c(SEXP YSEXP, SEXP rhoSEXP, SEXP sigma_MSEXP, SEXP sigma_RSEXP, SEXP M0SEXP, SEXP R0SEXP);
+SEXP _partialCI_loglik_par_t_c(SEXP YSEXP, SEXP rhoSEXP, SEXP sigma_MSEXP, SEXP sigma_RSEXP, SEXP M0SEXP, SEXP R0SEXP, SEXP nuSEXP);
+void R_init_partialCI(DllInfo *dll);
 
 R_CallMethodDef callMethods[]  = {
-  {"partialCI_lagged_variance_c", (DL_FUNC) &partialCI_lagged_variance_c, 3},
-  {"partialCI_estimate_rho_par_c", (DL_FUNC) &partialCI_estimate_rho_par_c, 1},
-  {"partialCI_estimate_par_c", (DL_FUNC) &partialCI_estimate_par_c, 2},
-  {"partialCI_pvmr_par_c", (DL_FUNC) &partialCI_pvmr_par_c, 3},
-  {"partialCI_kalman_gain_par_mr", (DL_FUNC) &partialCI_kalman_gain_par_mr, 3},
-  {"partialCI_loglik_par_c", (DL_FUNC) &partialCI_loglik_par_c, 6},
-  {"partialCI_loglik_par_t_c", (DL_FUNC) &partialCI_loglik_par_t_c, 7},
+  {"_partialCI_lagged_variance_c", (DL_FUNC) &_partialCI_lagged_variance_c, 3},
+  {"_partialCI_estimate_rho_par_c", (DL_FUNC) &_partialCI_estimate_rho_par_c, 1},
+  {"_partialCI_estimate_par_c", (DL_FUNC) &_partialCI_estimate_par_c, 2},
+  {"_partialCI_pvmr_par_c", (DL_FUNC) &_partialCI_pvmr_par_c, 3},
+  {"_partialCI_kalman_gain_par_mr", (DL_FUNC) &_partialCI_kalman_gain_par_mr, 3},
+  {"_partialCI_loglik_par_c", (DL_FUNC) &_partialCI_loglik_par_c, 6},
+  {"_partialCI_loglik_par_t_c", (DL_FUNC) &_partialCI_loglik_par_t_c, 7},
+  {"R_init_partialCI", (DL_FUNC) &R_init_partialCI, 1},
   {NULL, NULL, 0}
 };
 
