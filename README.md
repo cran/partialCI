@@ -27,52 +27,47 @@ two particular stocks of interest:
 ```
 > yfit.pci("RDS-B", "RDS-A")
 Fitted values for PCI model
-  Y[t] = alpha + X[t] %*% beta + M[t] + R[t]
+  Y[t] = X[t] %*% beta + M[t] + R[t]
   M[t] = rho * M[t-1] + eps_M [t], eps_M[t] ~ N(0, sigma_M^2)
   R[t] = R[t-1] + eps_R [t], eps_R[t] ~ N(0, sigma_R^2)
 
            Estimate Std. Err
-alpha        0.2063   0.8804
-beta_RDS-A   1.0531   0.0133
-rho          0.9055   0.0355
-sigma_M      0.2431   0.0162
-sigma_R      0.0993   0.0350
+beta_RDS-A   1.0427   0.0098
+rho          0.1770   0.1715
+sigma_M      0.0825   0.0130
+sigma_R      0.1200   0.0095
 
--LL = 41.30, R^2[MR] = 0.863
+-LL = -255.97, R^2[MR] = 0.446
 ```
 
-This example was run on 1/7/2016.  RDS-A and RDS-B are two 
+This example was run on 29/9/2018.  RDS-A and RDS-B are two 
 classes of shares offered by Royal Dutch Shell that differ slightly
 in aspects of their tax treatment.  The above fit shows that
 the spread between the two shares is mostly mean-reverting but that
 it contains a small random walk component.  The mean-reverting
-component accounts for 86.3% of the variance of the daily returns.
-The value of 0.9055 for rho corresponds to a half-life of mean
-reversion of about 7 trading days.
+component accounts for 44.6% of the variance of the daily returns.
+The value of 0.1770 for rho corresponds to a half-life of mean
+reversion of about 4 trading days.
 
 To test the goodness of fit, the test.pci function can be used:
 
 ```
 > h <- yfit.pci("RDS-B", "RDS-A")
-> test.pci(h)
+> test.pci(Y=h)
 
-	Likelihood ratio test of [Random Walk or CI(1)] vs Almost PCI(1) (joint penalty method)
+LR test of [RW or CI(1)] vs Almost PCI(1) (joint penalty,wilk)
 
-data:  h
+data:  RDS-B / RDS-A
 
-Hypothesis              Statistic    p-value
-Random Walk                 -4.94      0.010
-AR(1)                       -4.08      0.010
-Combined                               0.010
+Hypothesis      Statistic  p-value    alpha alpha_bonf alpha_holm
+Random Walk         -8.30    0.000    0.050    0.025    0.050
+AR(1)               -7.68    0.000    0.050    0.025    0.025
 
 ```
 
 The test.pci function tests each of two different null hypotheses:
 (a) the residual series is purely a random walk, and (b) the residual series is
-purely autoregressive.  In addition, the union of these hypothesis is
-also tested.  For practical applications, one is usually most interested in
-rejecting the first of these null hypotheses, e.g., that the residual series
-is purely a random walk.
+purely autoregressive. Only if both null hypothesis can be rejected a time series is classified as partially cointegrated. The two p-values of 0.000 indicate that RDS-A and RDS-B are indeed partially cointegrated. This still holds true if a Bonferroni corrected significance level (alpha_bonf) is considered.
 
 The partialCI package also contains a function for searching for
 hedging portfolios.  Given a particular stock (or time series),
@@ -81,51 +76,48 @@ replicate the target stock.  In the following example, a hedge
 is sought for SPY using sector ETF's.
 
 ```
-> sectorETFS <- c("XLB", "XLE", "XLF", "XLI", "XLK", "XLP", "XLU", "XLV", "XLY")
-> prices <- multigetYahooPrices(c("SPY", sectorETFS), start=20140101)
-> hedge.pci(prices[,"SPY"], prices)
-     -LL   LR[rw]    p[rw]    p[mr]      rho  R^2[MR]   Factor |   Factor coefficients
-  490.67  -1.7771   0.1782   0.0100   0.9587   0.8246      XLF |   6.8351 
-  283.26  -4.3988   0.0137   0.0786   0.9642   1.0000      XLK |   3.6209   2.2396 
-  168.86  -6.4339   0.0100   0.0100   0.7328   0.6619      XLI |   2.3191   1.6542   1.1391 
+  -LL   LR[rw]    p[rw]    p[mr]      rho  R^2[MR]   Factor |   Factor coefficients
+ 1307.48  -2.9362   0.0531   0.2847   0.9722   0.8362      XLK |   3.1505 
+  747.43  -3.6282   0.0266   0.0253   0.9112   0.5960      XLI |   1.8554   1.6029 
+  548.63  -5.9474   0.0026   0.0007   0.6764   0.4098      XLY |   1.3450   1.2436   0.6750 
 
 Fitted values for PCI model
-  Y[t] = alpha + X[t] %*% beta + M[t] + R[t]
+  Y[t] = X[t] %*% beta + M[t] + R[t]
   M[t] = rho * M[t-1] + eps_M [t], eps_M[t] ~ N(0, sigma_M^2)
   R[t] = R[t-1] + eps_R [t], eps_R[t] ~ N(0, sigma_R^2)
 
            Estimate Std. Err
-alpha       14.2892   1.5598
-beta_XLF     2.3191   0.1439
-beta_XLK     1.6542   0.0804
-beta_XLI     1.1391   0.0662
-rho          0.7328   0.1047
-sigma_M      0.2678   0.0315
-sigma_R      0.2056   0.0401
+beta_XLK     1.3450   0.0419
+beta_XLI     1.2436   0.0352
+beta_XLY     0.6750   0.0310
+rho          0.6764   0.1502
+sigma_M      0.2323   0.0429
+sigma_R      0.3045   0.0331
 
--LL = 168.86, R^2[MR] = 0.662
+-LL = 548.63, R^2[MR] = 0.410
 ```
 
 The top table displays the quality of the fit that is found as each new
 factor is added to the fit.  The best fit consisting of only one factor
-is found by using XLF (the financials sector).  The negative log likelihod
-score for this model is 490.67.  However, the random walk
+is found by using XLK (the technology sector).  The negative log likelihod
+score for this model is 1307.48.  However, the random walk
 hypothesis (p[rw]) cannot be rejected at the 5% level.  When adding
-XLK (the technology sector), the negative log likelihood drops to 283.26
-and the random walk hypothesis for the spread can now be rejected.  This means
-that SPY is at least partially cointegrated and possibly fully cointegrated 
-with a portfolio consisting of XLF and XLK in the right proportions.  The
-best overall fit is obtained by also adding XLI (industrials) to the hedging
+XLI (the industrial sector), the negative log likelihood drops to 747.43
+and the random walk and the purely autoregressive hypothesis can not be rejected at the 5% level if if we account for multiple testing. The best overall fit is obtained by also adding XLY (consumer discretionary) to the hedging
 portfolio.  The final fit is
 
 ```
-  SPY = $14.29 + 2.32 XLF + 1.65 XLK + 1.14 XLI
+  SPY = 1.3450 XLK + 1.2436 XLI + 0.6750 XLY
 ```
 
 For this fit, the proportion of variance attributable to the mean reverting
-component is 66.2%, and the half life of mean reversion is about 2.2 days.
+component is 41.0%. In addition, for the best fit we can reject the random walk and the purely autoregressive hypothesis at the 5% level. The later holds even if we account for multiple testing. 
 
 Please feel free to write to us if you have questions or suggestions.
+
+Jonas Rende 
+
+jonas.rende@fau.de
 
 Matthew Clegg  
 
@@ -135,9 +127,7 @@ Christopher Krauss
 
 christopher.krauss@fau.de
 
-Jonas Rende 
 
-jonas.rende@fau.de
 
-March 05, 2018  
+Oktober 02, 2018  
 

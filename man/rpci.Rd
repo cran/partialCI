@@ -5,16 +5,14 @@ Generates a random instance of a partial cointegration model
 }
 \description{Generates a random instance of a partial cointegration model}
 \usage{
-rpci(n, alpha, beta, sigma_C, rho, sigma_M, sigma_R, 
+rpci(n, beta, sigma_C, rho, sigma_M, sigma_R, 
   include.state = FALSE, robust = FALSE, nu = 5)
 }
 \arguments{
   \item{n}{
 Number of observations to generate
 }
-  \item{alpha}{
-Constant term of the model
-}
+
   \item{beta}{
 A vector of factor loadings
 }
@@ -50,7 +48,7 @@ vector of length k representing the standard deviations of the increments
 of the factor loadings.  
   
 Generates a random realization of the sequence
-    \deqn{Y_t = \alpha + \beta_1 F_{1,t} + \beta_2 F_{2,t} + ... + \beta_k F_{k,t} + M_t + R_t}
+    \deqn{Y_t =  \beta_1 F_{1,t} + \beta_2 F_{2,t} + ... + \beta_k F_{k,t} + M_t + R_t}
     \deqn{F_{i,j} = F_{i,j-1} + \delta_{i,j}}
     \deqn{M_t = \rho m_{t-1} + \epsilon_{M,t}}
     \deqn{R_t = r_{t-1} + \epsilon_{R,t}}
@@ -80,7 +78,7 @@ Jonas Rende \email{jonas.rende@fau.de}
 \code{\link{fit.pci}}
 }
 \examples{
-rpci(10, alpha =1, beta=1, sigma_C=1, rho=0.9, sigma_R=1, sigma_M=1)
+rpci(10, beta=1, sigma_C=1, rho=0.9, sigma_R=1, sigma_M=1)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

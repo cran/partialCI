@@ -16,7 +16,7 @@
 #  http://www.r-project.org/Licenses/
 
 
-rpci <- function (n, alpha, beta, sigma_C, rho, sigma_M, sigma_R, 
+rpci <- function (n, beta , sigma_C, rho, sigma_M, sigma_R, 
                   include.state = FALSE, robust=FALSE, nu=5) {
     # Generates a random partially cointegrated sequence.  On input, n is the
     # length of the sequence to be generated.  beta is a vector of length k
@@ -25,7 +25,7 @@ rpci <- function (n, alpha, beta, sigma_C, rho, sigma_M, sigma_R,
     # of the factor loadings.  
     #
     # Generates a random realization of the sequence
-    #    y_t = alpha + beta_1 F_{1,t} + beta_2 F_{2,t} + ... + beta_k F_{k,t} + m_t + r_t
+    #    y_t = F_0 + beta_1 F_{1,t} + beta_2 F_{2,t} + ... + beta_k F_{k,t} + m_t + r_t
     #    F_{i,j} = F_{i,j-1} + delta_{i,j}
     #    m_t = rho m_{t-1} + eps_{M,t}
     #    r_t = r_{t-1} + eps_{R,t}
@@ -47,7 +47,7 @@ rpci <- function (n, alpha, beta, sigma_C, rho, sigma_M, sigma_R,
     F <- apply(D, 2, cumsum)
     colnames(F) <- paste ("F", 1:ncol(F), sep="_")
     PAR <- rpar (n, rho, sigma_M, sigma_R, include.state=TRUE, robust=robust, nu=nu)
-    Y <- F %*% beta + PAR$X + alpha
+    Y <- F %*% beta + PAR$X 
     DF <- cbind(Y, F)
     colnames(DF)[1] <- "Y"
     if (include.state) {

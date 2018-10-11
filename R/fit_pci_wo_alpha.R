@@ -55,7 +55,6 @@ fit.pci.twostep.a0 <- function (Y, X, par_model=c("par", "ar1", "rw"), robust=FA
         basis=X,
         residuals=L$residuals,
         index=1:length(Y),
-        alpha = 0,
         beta = coef(L)[2:nrow(coef(L)),1],
         rho = PAR$rho,
         sigma_M = PAR$sigma_M,
@@ -89,7 +88,7 @@ pci.jointpenalty.guess.a0 <- function (Y, X) {
     #   1.  Estimates beta by fitting the differenced X series to the
     #       differenced Y series.
     #   2.  Estimates rho, sigma_M and sigma_R by fitting a PAR series
-    #       to  Y - X %*% beta - alpha
+    #       to  Y - X %*% beta
     # Returns the guess that is found
 
     X <- as.matrix(X)
@@ -109,7 +108,7 @@ pci.jointpenalty.guess.a0 <- function (Y, X) {
     p0
 }
 
-fit.pci.jointpenalty.rw.a0 <- function (Y, X, lambda=0, p0=pci.jointpenalty.guess(Y,X), 
+fit.pci.jointpenalty.rw.a0 <- function (Y, X, lambda=0, p0=pci.jointpenalty.guess.a0(Y,X), 
                                      robust=FALSE, nu=5, pgtol=1e-8) {
     # On input, Y is an n x 1 column vector, and X is an n x k matrix.
     # Fits an PCI model to Y,X where the residual series is modeled as
@@ -189,9 +188,9 @@ fit.pci.jointpenalty.mr.a0 <- function (Y, X, lambda=0, p0=pci.jointpenalty.gues
     PAR0.mr <- fit.par(res0, model="ar1", robust=robust, nu=nu)   
     mr.p0 <- c(beta0, PAR0.mr$rho, PAR0.mr$sigma_M)
     names(mr.p0)[n+2] <- "sigma_M"
-    
-    mr.pmin <- c(rep(-Inf, n), -1, 0)
-    mr.pmax <- c(rep(Inf, n), 1, 2.0 * rw.p0[n+3])
+
+    mr.pmin <- c(rep(-Inf, n), 0.35, 0)
+    mr.pmax <- c(rep(Inf, n), 0.999, 2.0 * rw.p0[n+3])
 
     highval <- max(mr.ofun(rw.p0), mr.ofun(mr.p0)) + 1
     fit1 <- optim(rw.p0, mr.ofun, method="L-BFGS-B", lower=mr.pmin, upper=mr.pmax, hessian=TRUE, control=list(pgtol=pgtol))
@@ -250,8 +249,8 @@ fit.pci.jointpenalty.both.a0 <- function (Y, X, lambda=0, p0=pci.jointpenalty.gu
 #    debug(objective)
 
     maxsig <- fit.rw$par[["sigma_R"]]
-    pmin <- c(rep(-Inf, n), -1, 0, 0)
-    pmax <- c(rep(Inf, n), 1, 2.0 * maxsig, 2.0 * maxsig)
+    pmin <- c(rep(-Inf, n), 0.35, 0, 0)
+    pmax <- c(rep(Inf, n), 0.999, 2.0 * maxsig, 2.0 * maxsig)
 
     best_value <- objective(start_list[[1]])+1
     for (start in start_list) {
@@ -264,7 +263,7 @@ fit.pci.jointpenalty.both.a0 <- function (Y, X, lambda=0, p0=pci.jointpenalty.gu
 #                rrho, bestfit$par[1], bestfit$par[2], bestfit$par[3], bestfit$value))
         }        
     }
-
+   
     bestfit.R0 <- (Y - X %*% bestfit$par[1:n]) [1]
     bestfit.par <- c(bestfit$par[1:(n+3)], M0=0, R0=bestfit.R0)
     bestfit.se <- rep(NA_real_, nrow(bestfit$hessian))

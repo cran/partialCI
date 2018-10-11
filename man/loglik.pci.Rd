@@ -7,7 +7,7 @@ Computes the log likelihood of a partially cointegrated model
 Computes the log likelihood of a partially cointegrated model
 }
 \usage{
-loglik.pci(Y, X, alpha, beta, rho, sigma_M, sigma_R, 
+loglik.pci(Y, X, beta, rho, sigma_M, sigma_R, 
   M0 = 0, R0 = 0, 
   calc_method = c("css", "kfas", "ss", "sst", "csst"), 
   nu = pci.nu.default())
@@ -20,9 +20,7 @@ The time series that is to be modeled.  A plain or \code{\link{zoo}} vector of l
   \item{X}{
 A (possibly \code{\link{zoo}}) matrix of dimensions \code{n} x \code{k}.  If \code{k=1}, then this may be a plain or \code{\link{zoo}} vector.
 }
-  \item{alpha}{
-The constant term to be used in the fit.
-}
+
   \item{beta}{
 A vector of length \code{k} representing the weightings to be given to the components of \code{X}.
 }
@@ -62,8 +60,8 @@ The degrees-of-freedom parameter to be used if \code{calc_method} is "sst" or "c
 The partial cointegration model is given by the equations:
 
 \deqn{
-  Y_t = \alpha + \beta_1 * X_{t,1} + beta_2 * X_{t,2} + ... + beta_k * X_{t,k} + M_t + R_t}{
-  Y[t] = alpha + beta[1] * X[t,1] + beta[2] * X[t,2] + ... + beta[k] * X[t,k] + M[t] + R[t]
+  Y_t =   \beta_1 * X_{t,1} + beta_2 * X_{t,2} + ... + beta_k * X_{t,k} + M_t + R_t}{
+  Y[t] =   beta[1] * X[t,1] + beta[2] * X[t,2] + ... + beta[k] * X[t,k] + M[t] + R[t]
 }
 \deqn{M_t = \rho M_{t-1} + \epsilon_{M,t}}{M[t] = rho * M[t-1] + epsilon_M[t]}
 \deqn{R_t = R_{t-1} + \epsilon_{R,t}}{R[t] = R[t-1] + epsilon_R[t]}
@@ -74,7 +72,7 @@ The partial cointegration model is given by the equations:
 Given the input series 
   \code{Y} and \code{X}, 
 and given the parameter values 
-  \code{alpha}, \code{beta}, \code{rho}, \code{M0} and \code{R0}, 
+  \code{beta}, \code{rho}, \code{M0} and \code{R0}, 
 the innovations \code{epsilon_M[t]} and \code{epsilon_R[t]} are calculated
 using a Kalman filter.  Based upon these values, the log-likelihood score
 is then computed and returned.
@@ -106,8 +104,8 @@ Jonas Rende \email{jonas.rende@fau.de}
 ##--	or do  help(data=index)  for the standard data sets.
 
     set.seed(1)
-    YX <- rpci(n=500, alpha=1, beta=c(2,3,4), sigma_C=c(1,1,1), rho=0.9, sigma_M=0.1, sigma_R=0.2)
-    loglik.pci(YX[,1], YX[,2:ncol(YX)], alpha=1, beta=c(2,3,4), rho=0.9, sigma_M=0.1, sigma_R=0.2)
+    YX <- rpci(n=500, beta=c(2,3,4), sigma_C=c(1,1,1), rho=0.9, sigma_M=0.1, sigma_R=0.2)
+    loglik.pci(YX[,1], YX[,2:ncol(YX)], beta=c(2,3,4), rho=0.9, sigma_M=0.1, sigma_R=0.2)
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

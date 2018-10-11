@@ -11,8 +11,7 @@ fit.pci(Y, X,
   pci_opt_method = c("jp", "twostep"), 
   par_model = c("par", "ar1", "rw"), 
   lambda = 0, 
-  robust = FALSE, nu = 5,
-  include_alpha=FALSE)
+  robust = FALSE, nu = 5)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -51,16 +50,14 @@ If \code{TRUE}, then the residuals are assumed to follow a t-distribution with
   \item{nu}{
 The degrees-of-freedom parameter to be used in robust estimation.  Default: 5.
 }
-\item{include_alpha}{If TRUE, then a constant term is estimated with the model.
-If FALSE, the constant term is omitted.  Default: \code{FALSE}.
 }
-}
+
 \details{
 The partial cointegration model is given by the equations:
 
 \deqn{
-  Y_t = \alpha + \beta_1 * X_{t,1} + beta_2 * X_{t,2} + ... + beta_k * X_{t,k} + M_t + R_t}{
-  Y[t] = alpha + beta[1] * X[t,1] + beta[2] * X[t,2] + ... + beta[k] * X[t,k] + M[t] + R[t]
+  Y_t =  \beta_1 * X_{t,1} + beta_2 * X_{t,2} + ... + beta_k * X_{t,k} + M_t + R_t}{
+  Y[t] = beta[1] * X[t,1] + beta[2] * X[t,2] + ... + beta[k] * X[t,k] + M[t] + R[t]
 }
 \deqn{M_t = \rho M_{t-1} + \epsilon_{M,t}}{M[t] = rho * M[t-1] + epsilon_M[t]}
 \deqn{R_t = R_{t-1} + \epsilon_{R,t}}{R[t] = R[t-1] + epsilon_R[t]}
@@ -71,12 +68,12 @@ The partial cointegration model is given by the equations:
 Given the input series 
   \code{Y} and \code{X},
 this function searches for the parameter values 
-  \code{alpha}, \code{beta}, \code{rho}
+\code{beta}, \code{rho}
 that give the best fit of this model when using a Kalman filter.
 
 If \code{pci_opt_method} is \code{twostep}, then a two-step procedure is used.
 In the first step, a linear regression is performed of \code{X} on \code{Y} to determine
-the parameters \code{alpha} and \code{beta}.  From this regression, a series of residuals
+the parameter \code{beta}.  From this regression, a series of residuals
 is determined.  In the second step, a model is fit to the residual series.  If 
 \code{par_model} is \code{par}, then a partially autoregressive model is fit to
 the residual series. If \code{par_model} is \code{ar1}, then an autoregressive model
@@ -86,7 +83,7 @@ and \code{par_model} is \code{ar1}, then this reduces to the Engle-Granger two-s
 procedure.
 
 If \code{pci_opt_method} is \code{jp}, then the joint-penalty procedure is used.
-In this method, the parameters \code{alpha} and \code{beta} are estimated jointly
+In this method, the parameter\code{beta} are estimated jointly
 with the parameter \code{rho} using a gradient-search optimization function.
 In addition, a penalty value of 
   \eqn{\lambda * \sigma_R^2}{lambda * sigma_R^2}
@@ -105,17 +102,11 @@ is guaranteed to find parameter values which give a likelihood score at least
 as good as those found using the two-step procedure.  Sometimes the improvement
 over the two-step procedure is substantial.
 
-The parameter \code{include_alpha} determines whether or not a constant term
-is included with the fit.  Note that the model \code{alpha = a, R0 = 0} is
-equivalent to the model \code{alpha = 0, R0 = a}.  Thus, the constant term can
-be interpreted as an estimate of the mean of the system at time \code{t=0}.  
-As the random walk evolves, the mean will drift correspondingly.
 }
 \value{
 An object of class \code{pci.fit} containing the fit that was found.  The following components
 may be of interest
-\item{alpha}{The constant term of the fit}
-\item{alpha.se}{The estimated standard error of \code{alpha}}
+
 \item{beta}{The vector of weights}
 \item{beta.se}{The standard errors of the components of \code{beta}}
 \item{rho}{The estimated coefficient of mean reversion}
@@ -134,8 +125,7 @@ may be of interest
   using the Partially Autoregressive Model.
   \emph{Available at SSRN: http://ssrn.com/abstract=2556957}
   
-  Clegg, Matthew and Krauss, Christopher, 2016. Pairs trading with partial cointegration. FAU Discussion Papers in Economics, University of Erlangen-Nuernberg. 
-  \emph{Available at https://www.iwf.rw.fau.de/files/2016/05/05-2016.pdf}    
+  Clegg, Matthew and Krauss, Christopher, 2018. Pairs trading with partial cointegration. Quantitative Finance, 18(1), 121 - 138.
 }
 \author{
 Matthew Clegg \email{matthewcleggphd@gmail.com}
@@ -155,7 +145,7 @@ Jonas Rende \email{jonas.rende@fau.de}
 ##--	or do  help(data=index)  for the standard data sets.
 
 
-YX <- rpci(n=1000, alpha=1, beta=c(2,3,4), sigma_C=c(1,1,1), rho=0.9,sigma_M=0.1, sigma_R=0.2)
+YX <- rpci(n=1000, beta=c(2,3,4), sigma_C=c(1,1,1), rho=0.9,sigma_M=0.1, sigma_R=0.2)
 fit.pci(YX[,1], YX[,2:ncol(YX)])
 
 }

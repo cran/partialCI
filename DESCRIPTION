@@ -1,8 +1,8 @@
 Package: partialCI
 Type: Package
 Title: Partial Cointegration
-Version: 1.1.1
-Date: 2018-03-05
+Version: 1.2.0
+Date: 2018-09-27
 Authors@R: c(person("Matthew", "Clegg", role=c("aut"),
                     email="matthewcleggphd@gmail.com"),
             person("Christopher", "Krauss", role=c("aut"),
@@ -23,6 +23,6 @@ RoxygenNote: 6.0.1
 VignetteBuilder: knitr
 LinkingTo: Rcpp
 NeedsCompilation: yes
-Packaged: 2018-03-06 11:10:05 UTC; jonas
+Packaged: 2018-10-11 15:16:03 UTC; jonas
 Repository: CRAN
-Date/Publication: 2018-03-06 11:53:03 UTC
+Date/Publication: 2018-10-11 15:50:03 UTC

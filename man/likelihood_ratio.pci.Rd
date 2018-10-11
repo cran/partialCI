@@ -75,7 +75,7 @@ Jonas Rende \email{jonas.rende@fau.de}
 \code{\link{fit.pci}} Fitting partially cointegrated models
 }
 \examples{
-YX <- rpci(n=1000, alpha=1, beta=c(2,3,4), sigma_C=c(1,1,1), rho=0.9, sigma_M=0.1, sigma_R=0.2)
+YX <- rpci(n=1000, beta=c(2,3,4), sigma_C=c(1,1,1), rho=0.9, sigma_M=0.1, sigma_R=0.2)
 likelihood_ratio.pci(YX[,1], YX[,2:ncol(YX)])
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

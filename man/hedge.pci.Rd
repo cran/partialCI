@@ -94,8 +94,8 @@ from among the columns of \code{X} which yield the best fit to the partially
 cointegrated fit:
 
 \deqn{
-  Y_t = \alpha + \beta_1 * X_{t,i1} + beta_2 * X_{t,i2} + ... + beta_N * X_{t,iN} + M_t + R_t}{
-  Y[t] = alpha + beta[1] * X[t,i1] + beta[2] * X[t,i2] + ... + beta[k] * X[t,iN] + M[t] + R[t]
+  Y_t =  \beta_1 * X_{t,i1} + beta_2 * X_{t,i2} + ... + beta_N * X_{t,iN} + M_t + R_t}{
+  Y[t] =  + beta[1] * X[t,i1] + beta[2] * X[t,i2] + ... + beta[k] * X[t,iN] + M[t] + R[t]
 }
 \deqn{M_t = \rho M_{t-1} + \epsilon_{M,t}}{M[t] = rho * M[t-1] + epsilon_M[t]}
 \deqn{R_t = R_{t-1} + \epsilon_{R,t}}{R[t] = R[t-1] + epsilon_R[t]}
@@ -159,7 +159,7 @@ Jonas Rende \email{jonas.rende@fau.de}
 ##-- ==>  Define data, use random,
 ##--	or do  help(data=index)  for the standard data sets.
 
-\dontrun{YX <- rpci(n=1000, alpha=1, beta=c(2,3,4,5,6), 
+\dontrun{YX <- rpci(n=1000, beta=c(2,3,4,5,6), 
   sigma_C=c(0.1,0.1,0.1,0.1,0.1), rho=0.9, sigma_M=1, sigma_R=1)
 YXC <- cbind(YX, matrix(rnorm(5000), ncol=5))
 hedge.pci(YX[,1], YX[,2:ncol(YX)])

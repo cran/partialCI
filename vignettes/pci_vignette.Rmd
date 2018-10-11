@@ -1,9 +1,10 @@
 ---
 title: "A partialCI Guide"
 author: 
-- "Matthew Clegg"
-- "Christopher Krauss"
 - "Jonas Rende"
+- "Christopher Krauss"
+- "Matthew Clegg"
+
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 bibliography: rende.bib
@@ -23,7 +24,7 @@ The **partialCI** package fits a partial cointegration model to describe a time 
 
 ### Model definition
 
-Based on @Engle.1987,  @Clegg.2016 define the concept of partial cointegration as follows: \dfn{Definition}: "The components of the vector $X_t$ are said to be partially cointegrated of order $d$, $b$, denoted $X_t \sim PCI\left(d,b\right)$, if (i) all components of $X_t$ are $I\left(d\right)$; (ii) there exists a vector  $\alpha$ so that $Z_t = \alpha \prime X_t$ and $Z_t$ can be decomposed as a sum $Z_t = R_t + M_t$, where $R_t \sim I\left(d\right)$ and $M_t \sim I\left(d - b\right)$."
+Based on @Engle.1987,  @Clegg.2018 define the concept of partial cointegration as follows: \dfn{Definition}: "The components of the vector $X_t$ are said to be partially cointegrated of order $d$, $b$, denoted $X_t \sim PCI\left(d,b\right)$, if (i) all components of $X_t$ are $I\left(d\right)$; (ii) there exists a vector  $\alpha$ so that $Z_t = \alpha \prime X_t$ and $Z_t$ can be decomposed as a sum $Z_t = R_t + M_t$, where $R_t \sim I\left(d\right)$ and $M_t \sim I\left(d - b\right)$."
 
 Let $Y_t$ denote the target time series and $X_{j,t}$ the $j^{th}$ factor time series at time $t$, where $j = \lbrace 1, 2, \dots, k \rbrace$. The target time series and the $k$ factor time series are partially cointegrated, if a parameter vector $\iota = \left\lbrace\beta_1, \beta_2, \dots, \beta_k, \rho, \sigma_M, \sigma_R, M_0, M_R\right\rbrace$ exists such that the subsequent model equations are satisfied:
 
@@ -38,7 +39,7 @@ $$
         \beta_j \in \mathbb{R}; \rho &\in \left(-1, 1\right);\sigma^2_M, \sigma^2_R \in \mathbb{R}_0^+.  \\
 \end{aligned}
 $$
-Thereby, $W_t$ denotes the partially autoregressive process, $R_t$ the permanent component, $M_t$ the transient component and $\beta = \lbrace \beta_1, \beta_2, \dots, \beta_k \rbrace$ is the partially cointegrating vector. The permanent component is modeled as a random walk and the transient component as an AR(1)-process with $AR(1)$-coefficient $\rho$. The corresponding error terms $\varepsilon_{M,t}$ and $\varepsilon_{R,t}$ are assumed to follow mutually independent, normally distributed white noise processes with mean zero and variances $\sigma^2_M$ and $\sigma^2_R$. A key advantage of modeling the cointegrating process as a partially autoregressive process is that we are able to calculate the proportion of variance attributable to mean-reversion (PVMR), defined as (@Clegg.2016),
+Thereby, $W_t$ denotes the partially autoregressive process, $R_t$ the permanent component, $M_t$ the transient component and $\beta = \lbrace \beta_1, \beta_2, \dots, \beta_k \rbrace$ is the partially cointegrating vector. The permanent component is modeled as a random walk and the transient component as an AR(1)-process with $AR(1)$-coefficient $\rho$. The corresponding error terms $\varepsilon_{M,t}$ and $\varepsilon_{R,t}$ are assumed to follow mutually independent, normally distributed white noise processes with mean zero and variances $\sigma^2_M$ and $\sigma^2_R$. A key advantage of modeling the cointegrating process as a partially autoregressive process is that we are able to calculate the proportion of variance attributable to mean-reversion (PVMR), defined as (@Clegg.2018),
 $$
 R^2_{MR} = \frac{VAR\left[\left(1-B\right)M_t\right]}{VAR\left[\left(1-B\right)W_t\right]} = \frac{2\sigma^2_M}{2\sigma^2_M + \left(1+\rho\right)\sigma^2_R} , \hspace{0.2cm} R^2_{MR} \in \left[0,1\right],  
 $$
@@ -46,7 +47,7 @@ where $B$ denotes the backshift operator. The statistic $R^2_{MR}$ is useful to 
 
 ### State space represenation
 
-The applied state space transformation is in line with @Clegg.2016. Given that the PAR process $W_t$ is not observable, we convert the PCI model into the following state space model, consisting of an observation and a state equation:  
+The applied state space transformation is in line with @Clegg.2018. Given that the PAR process $W_t$ is not observable, we convert the PCI model into the following state space model, consisting of an observation and a state equation:  
 $$
 \begin{align}
 X_t &= H Z_t \\ 
@@ -61,7 +62,15 @@ Parameters are estimated via the maximum likelihood (ML) method. Using a quasi-N
 
 
 ### A likelihood ratio test routine for partial cointegration}
-The likelihood ratio test (LRT) implemented in the **partialCI** package adopts the LRT routine for PAR models proposed by @Clegg.2015a. In a PCI scenario the null hypothesis consists of two conditions -- namely the hypothesis that the residual series is a pure random walk ($\mathcal{H}^R_0$) or a pure AR(1)-process $(\mathcal{H}^M_0)$. The two conditions are separately tested. Only if both, $\mathcal{H}^R_0$ and $\mathcal{H}^M_0$ are individually rejected, the null hypothesis of no partial cointegration is rejected.
+
+A time series is classiefied as PCI if we can individually reject both of the subsequent null hypothesis: (i) pure random walk $\left(\mathcal{H}_0^{R}\right)$ and (ii) pure stationary AR(1)-process $\left(\mathcal{H}_0^{M}\right)$ -- reflecting the cointegration case. The alternative is  in both cases unrestricted PCI $\left(\mathcal{H}_1^{MR}\right)$. Since the proposed null models are all nested in the PCI model (i) and (ii) can be tested with a likelihood ratio test scheme (@Neyman.1933). Given that under the null hypothesis we are solely testing parameters at the boundaries of the corresponding parameter space the regularity condition underlying the theorem of Wilks (@Wilks.1938) that the true parameter has to be an inner point of the parameter space does not hold. At boundaries standard asymptotics do not hold. There is a stream of the literature adressing the problem of likelihood ratio tests under such non-standard conditions (@Shapiro.1988). The asymptotic distribution of the likelihood test statistic is a mixture of $\chi^2$ distributions (@Shapiro.1988): 
+\begin{equation}\label{eq: chibar}
+\sum\limits_{m=0}^k w_m \chi^2_{(m)}, 
+\end{equation}
+where the weights $w_i$, with $i \in \{0, ... , k\}$ sum up to one. Let $m$ denote the degrees of freedom assosciated with the $\chi^2$ distribution of interest and $k$ is equal to the parameter difference of the full and the null model. Note that $\chi^2_{(0)} \equiv 0$, indicating a point mass at zero. Under Wilks theorem the weight for the $\chi^2_{(k)}$ distribution is set to one. Therefore, the resulting p-values assuming Wilks theorem holds are more conservative compared to the p-values associated with a mixed distribution. For large sample sizes we calculate p-values under Wilks theorem which can be seen as a conservative approximation of the p-values calculated from the mixed $\chi^2$ distribution (@Stoel.2006). To appropriately handle small or medium sample sizes p-values are parameterically bootstrapped as proposed by @MacKinnon.2009.
+
+To address the multiple testing problem we provide a Bonferroni (@Dunn.1961) and a Holm correction (@Holm.1979).
+
 
 ## Using the PCI package
 
@@ -72,12 +81,11 @@ The main functions of the **partialCI** package are fit.pci(), test.pci(), state
 The function **fit.pci()** fits a partial cointegration model to a given collection of time series. 
 
 ```
-fit.pci(Y, X, pci_opt_method = c("jp", "twostep"), par_model = c("par", "ar1", "rw"), lambda = 0, robust = FALSE, nu = 5, include_alpha=FALSE)} 
+fit.pci(Y, X, pci_opt_method = c("jp", "twostep"), par_model = c("par", "ar1", "rw"), robust = FALSE, nu = 5} 
 ```
 * `Y`: Denotes the target time series and `X` is a matrix containing the `k` factors used to model `Y`.
-* `pci_opt_method`: Specifies, whether the joint-penalty method (`"jp"`) or the (`"twostep"`) method is applied to obtain the model with the best fit. If `pci_opt_method` is specified as `"twostep"`, a two-step procedure similar to the method introduced by @Engle.1987 is performed. Which model is fitted to the residual series, depends on the specification for the argument `par_model`. In case of `"par"`, a partial autoregressive model is used, in case of `"ar1"`, an AR(1)-process and in case of `"rw"` a random walk (default: `par_model = "par"`). On the other hand, if the `pci_opt_method` is specified as `"jp"`, the joint-penalty method is applied, to estimate $\beta$, $\rho$, $\sigma_M^2$ and $\sigma_R^2$ jointly via ML. The likelihood score of the associated Kalman filter is extended by a penalty value $\lambda\sigma_R^2$ (default: `lambda = 0`), where $\lambda \in \mathbb{R}_0^+$ (default: `pci_opt_method = "jp"`).
-* `robust`: Determines whether the residuals are assumed to be normally (`FALSE`) or $t$-distributed (`TRUE`) (default: `robust = TRUE`). If `robust` is set to `TRUE` the degrees of freedom can be specified, using the argument `nu` (default: `nu = 5`). 
-* `include_alpha`: If `TRUE`, an intercept $\alpha$ is added to the PCI relationship (default: `include_alpha = FALSE`).
+* `pci_opt_method`: Specifies, whether the joint-penalty method (`"jp"`) or the (`"twostep"`) method is applied to obtain the model with the best fit. If `pci_opt_method` is specified as `"twostep"`, a two-step procedure similar to the method introduced by @Engle.1987 is performed. Which model is fitted to the residual series, depends on the specification for the argument `par_model`. In case of `"par"`, a partial autoregressive model is used, in case of `"ar1"`, an AR(1)-process and in case of `"rw"` a random walk (default: `par_model = "par"`). On the other hand, if the `pci_opt_method` is specified as `"jp"`, the joint-penalty method is applied, to estimate $\beta$, $\rho$, $\sigma_M^2$ and $\sigma_R^2$ jointly via ML.
+* `robust`: Determines whether the residuals are assumed to be normally (`FALSE`) or $t$-distributed (`TRUE`) (default: `robust = TRUE`). If `robust` is set to `TRUE` the degrees of freedom can be specified, using the argument `nu` (default: `nu = 5`).
 
 
 ###  test.pci()
@@ -85,10 +93,18 @@ fit.pci(Y, X, pci_opt_method = c("jp", "twostep"), par_model = c("par", "ar1", "
 The **test.pci()** function tests the goodness of fit of a PCI model. 
 
 ```
-test.pci(Y, X, alpha = 0.05, null_hyp = c("rw", "ar1"),  robust = FALSE, pci_opt_method = c("jp", "twostep"))}
+test.pci(Y, X, pci\_opt\_method = c("jp", "twostep"), irobust = FALSE, inu = 5,  null\_hyp = c("par", "rw",  "ar1"), imethod = c("wilk", "boot"), inrep = 999, istart.seed = 1, alpha = 0.05, use.multicore = FALSE)
 ```
-* `alpha`: Determines at which significance level the null hypothesis is rejected (default: `alpha = 0.05`).
-* `null_hyp`: Specifies whether the null hypothesis is a random walk (`"rw"`), an AR(1)-process (`"ar1"`) or a union of both hypotheses (`c("rw", "ar1")`) (default: `null_hyp = c("rw", "ar1")`).
+
+* `Y`: Within the test.pci() function `Y` can also be a fit.pci object.
+* `null_hyp`: Specifies whether the null hypothesis is either a random walk `"rw"` or an AR(1)-process `"ar1"`, or if both should be tested `"par"` (default: `null_hyp = "par"`).
+* `imethod`: Determine the method used to calculate p-values associated with the likelihood ratio test. If set to `"wilk"` p-values are determined under the assumption that theorem of Wilks holds (@Wilks.1938). If set to `"boot"` a parametric bootstrap method is carried out following the instructions of @MacKinnon.2009. The arguments `inrep`, `istart.seed` and`use.multicore` only have an effect if `imethod = "boot"` (default: `imethod = "wilk"`).
+* `inrep`: The number of bootstrap iterations (default: `inrep = 999`).
+* `istart.seed`: Sets the starting seed for the parametric bootstrap (default: `istart.seed = 1`). 
+* `use.multicore`: If `TRUE`, parallel processing will be used to improve bootstrap performance (default: `use.multicore = FALSE`). 
+* `alpha`: The global significance level used to determine the local siginificance level following (i) the conservative Bonferroni correction and (ii) the more liberal Holm correction to account for multiple testing. Only has an effect if `null_hyp = "par"` (default: `alpha = 0.05`).
+
+
 
 ### statehistory.pci()
 
@@ -99,14 +115,14 @@ statehistory.pci(A, data = A\$data, basis = A\$basis)}
 ```
 * `A`: Denotes a fit.pci() object.
 * `data`: Is a matrix consisting of the target time series and the `k` factor time series (default: `data = A\$data`).
-* `code{basis`: Captures the coefficients of the factor time series (default: `basis = A\$basis`).
+* `basis`: Captures the coefficients of the factor time series (default: `basis = A\$basis`).
 
 ###hedge.pci()
 
 The function **hedge.pci()** finds those `k` factors from a predefined set of factors which yield the best fit to the target time series. 
 
 ```
-hedge.pci(Y, X, maxfact = 10, lambda = 0, use.multicore = TRUE, minimum.stepsize = 0, verbose = TRUE, exclude.cols = c(), search_type = c("lasso", "full", "limited"), pci_opt_method=c("jp", "twostep"))}
+hedge.pci(Y, X, maxfact = 10, use.multicore = TRUE, minimum.stepsize = 0, verbose = TRUE, exclude.cols = c(), search_type = c("lasso", "full", "limited"), pci_opt_method=c("jp", "twostep"))}
 ```
 
 * `maxfact`: Denotes the maximum number of considered factors (default: * `maxfact = 10`).
@@ -117,14 +133,14 @@ hedge.pci(Y, X, maxfact = 10, lambda = 0, use.multicore = TRUE, minimum.stepsize
 
 ## Example
 
-As an introductory example, we explore the relationship between Royal Dutch Shell plc A (RDS-A) and Royal Dutch Shell plc B (RDS-B), using daily (closing) price data from 1 January 2006 to 1 December 2016.RDS-A (@RDSA.2016) and RDS-B (@RDSB.2016) data are downloaded from Yahoo Finance. To download the price data we use the getYahooData() function, implemented in the R package **TTR** (@Ulrich.2016).
+As an introductory example, we explore the relationship between Royal Dutch Shell plc A (RDS-A) and Royal Dutch Shell plc B (RDS-B), using daily (closing) price data from 1 January 2006 to 1 January 2018. RDS-A (@RDSA.2018) and RDS-B (@RDSB.2018) data are downloaded from Yahoo Finance. To download the price data we use the getYahooData() function, implemented in the R package **TTR** (@Ulrich.2016).
 
 ```
 	library(partialCI)
 	library(TTR)
 	
-	RDSA<-getYahooData("RDS-A", 20060101, 20161201)$Close
-	RDSB<-getYahooData("RDS-B", 20060101, 20161201)$Close
+	RDSA<-getYahooData("RDS-A", 20060101, 20180101)$Close
+	RDSB<-getYahooData("RDS-B", 20060101, 20180101)$Close
 ```
 
 A classic cointegration analysis yields that the two time series are not cointegrated.
@@ -132,7 +148,7 @@ A classic cointegration analysis yields that the two time series are not cointeg
 ```
 	library(egcm)
 
-	egcm_finance <- egcm(RDSA,RDSB,include.const = FALSE)
+	egcm_finance <- egcm(RDSA,RDSB,include.const = T)
 ```
 
 In particular, we apply the two-step approach of @Engle.1987 implemented in the R package **egcm** (@Clegg.2015c).
@@ -140,54 +156,52 @@ In particular, we apply the two-step approach of @Engle.1987 implemented in the 
 The following residual plot (code: `plot(egcm\_finance\$residuals,type = "l")`) suggests that the residual series is not purely mean-reverting, but rather shows a stochastical trend as well as a mean-reverting behavior. 
 
 
-![Residual plot classic cointegration: RDS-A and RDS-B (1.01.2006 - 1.12.2016, daily)](figures/OLSRES_RSARSB_2006_2016.png)
+![Residual plot classic cointegration: RDS-A and RDS-B (1.01.2006 - 1.01.2018, daily)](figures/OLSRES_RSARSB_2006_2017.png)
 
 Hence, it is not suprising that RDS-A and RDS-B are not cointegrated. Using the PCI framework, we are able to fit a PCI model to RDS-A and RDS-B.
 
 ```
-PCI_RDSA_RDSB<-fit.pci(RDSA, RDSB, pci_opt_method = c("jp"), par_model =c("par"), lambda = 0, robust = FALSE, nu = 5, include_alpha = FALSE))
+PCI_RDSA_RDSB<-fit.pci(RDSA, RDSB, pci_opt_method = c("jp"), par_model = c("par"), robust = FALSE, nu = 5)
 ```
 
 The R output is given as
 
 ```
-	Fitted values for PCI model
-  	Y[t] = X[t] %*% beta + M[t] + R[t]
-  	M[t] = rho * M[t-1] + eps_M [t], eps_M[t] ~ N(0, sigma_M^2)
-  	R[t] = R[t-1] + eps_R [t], eps_R[t] ~ N(0, sigma_R^2)
+Fitted values for PCI model
+    Y[t] = X[t] %*% beta + M[t] + R[t]
+    M[t] = rho * M[t-1] + eps_M [t], eps_M[t] ~ N(0, sigma_M^2)
+    R[t] = R[t-1] + eps_R [t], eps_R[t] ~ N(0, sigma_R^2)
 
-                   	 Estimate Std. Err
-	beta_Close   	0.9274   0.0038
-	rho         	 0.3959   0.0965
-	sigma_M      	0.1081   0.0083
-	sigma_R      	0.1195   0.0076
+           	Estimate Std. Err
+	beta_Close   0.9232   0.0037
+	rho          0.3549   0.0935
+	sigma_M      0.0937   0.0070
+	sigma_R      0.1085   0.0061
 
-	-LL = -1117.29, R^2[MR] = 0.540,
+	-LL = -1580.80, R^2[MR] = 0.524,
 ```
-where `beta_Close` denotes the partially cointegrating coefficient. The PVMR of 0.54 suggests that the spread time series also exhibits a clear mean-reverting behavior.
+where `beta_Close` denotes the partially cointegrating coefficient. The PVMR of 0.52 suggests that the spread time series also exhibits a clear mean-reverting behavior. 
 
-In the subsequent step, we utilize the test.pci() function to check whether RDS-A and RDS-B are partially cointegrated.
+In the subsequent step, we utilize the test.pci() function to check whether RDS-A and RDS-B are partially cointegrated. Given the large sample size we will utilize `imethod = "wilk"`.
 
 The R code
 
 ```
-test.pci(RDSA, RDSB, alpha = 0.05, null_hyp = c("rw", "ar1"), robust = FALSE, pci_opt_method = c("jp"))
+test.pci(RDSA, RDSB, alpha = 0.05, null_hyp = "par", imethod = "wilk")
 ```
 
 leads to the following output:
 
 ```
-	Likelihood ratio test of [Random Walk or CI(1)] vs Almost PCI(1)
-		(joint penalty method)
+  LR test of [RW or CI(1)] vs Almost PCI(1) (joint penalty,wilk)
+ 
+  data:  RDSA / RDSB
 
-	data:  StockA
-
-	Hypothesis              Statistic    p-value
-	Random Walk                -55.09      0.010
-	AR(1)                      -52.88      0.010
-	Combined                               0.010.
+  Hypothesis    Statistic  p-value    alpha alpha_bonf alpha_holm
+  Random Walk      -61.55    0.000    0.050    0.025    0.050
+  AR(1)            -59.69    0.000    0.050    0.025    0.025.
 ```
-A time series is classified as partially cointegrated, if and only if the random walk as well as the AR(1)-hypotheses are rejected. The $p$-value of 0.010 for the combined null hypothesis indicates that RDS-A and RDS-B are partially cointegrated in the considered period of time.
+Recall that a time series is classified as partially cointegrated, if and only if the random walk as well as the AR(1)-hypotheses are rejected. The $p$-value of 0.000 for both null model indicates that RDS-A and RDS-B are partially cointegrated in the considered period of time.
 
 Next, we demonstrate the use of the statehistory.pci() function which allows to estimate and extract the hidden states.
 The R code,
@@ -199,26 +213,26 @@ statehistory.pci(PCI_RDSA_RDSB)},
 
 results in the R output:
 ```
-                 Y     Yhat         Z           M         R        eps_M        eps_R
-	2006-01-03 35.87002 35.26781 0.6022031  0.00000000 0.6022031  0.00000000  0.00000000
-	2006-01-04 36.23993 35.57175 0.6681755  0.02030490 0.6478706  0.02030490  0.04566752
-	2006-01-05 35.80276 35.24161 0.5611509 -0.02112621 0.5822771 -0.02916450 -0.06559352
-	2006-01-06 36.48653 35.83377 0.6527591  0.01590352 0.6368556  0.02426695  0.05457850
-	...
-	2016-11-25 50.18000 49.52231 0.6576906 -0.08762384 0.7453144 -0.07643882 -0.17191764
-	2016-11-28 49.20000 48.22397 0.9760311  0.04699758 0.9290335  0.08168603  0.18371909
-	2016-11-29 49.06000 48.02922 1.0307808  0.04419468 0.9865862  0.02558931  0.05755262
-	2016-11-30 51.10000 50.23639 0.8636066 -0.02573955 0.8893462 -0.04323530 -0.09724000
-	2016-12-01 51.78000 51.15450 0.6254956 -0.08826115 0.7137567 -0.07807140 -0.17558945.
+              Y       Yhat      Z          M         R       eps_M      eps_R
+ 2006-01-03 32.2123 31.6496 0.562708  0.00000000 0.562708  0.0000000  0.0000000
+ 2006-01-04 32.5445 31.9223 0.622142  0.01758541 0.604556  0.0175854  0.0418485
+ 2006-01-05 32.1519 31.6260 0.525826 -0.01890081 0.544726 -0.0251415 -0.0598301
+ 2006-01-06 32.7659 32.1575 0.608460  0.01413479 0.594325  0.0208423  0.0495991
+ ...
+ 2017-12-22 63.0633 59.6017 3.461665 -0.04153269 3.503198 -0.0802318 -0.1909302
+ 2017-12-26 63.8210 60.1070 3.714061  0.05201243 3.662049  0.0667515  0.1588508
+ 2017-12-27 63.5237 60.0804 3.443331 -0.05171763 3.495049 -0.0701758 -0.1669996
+ 2017-12-28 63.7827 60.2666 3.516118 -0.00668903 3.522807  0.0116645  0.0277584
+ 2017-12-29 63.9841 60.5414 3.442713 -0.02536998 3.468083 -0.0229961 -0.0547247.
 ```
 The latter table covers the estimates of the hidden states $M$ and $R$ as well as the corresponding error terms `eps_M` and `eps_R`. `Z` is equal to the sum of $M$ and $R$. The estimate of the target time series is denoted by `Yhat`.
 
 The subsequent figure illustrates a plot of the extracted mean-reverting component of the spread associated with the RDS-A and RDS-B price time series (``plot(statehistory.pci(PCI_RDSA_RDSB)[,4],type = "l",ylab = "", xlab = "")`). 
 
-![Mean-reverting component RDS-A and RDS-B (1.01.2006 - 1.12.2016, daily)](figures/MCSDHIST_RSARSB_2006_2016.png)
+![Mean-reverting component RDS-A and RDS-B (1.01.2006 - 1.01.2018, daily)](figures/MCSDHIST_RSARSB_2006_2017.png)
 
 
-The horizontal blue lines are equal to two times the historical standard deviation in absolute terms of the mean-reverting component. A pairs trading strategy could exploit the mean-reverting behavior of $M_t$. Note that this example is in-sample; for a true out-of-sample application see @Clegg.2016.
+The horizontal blue lines are equal to two times the historical standard deviation in absolute terms of the mean-reverting component. A pairs trading strategy could exploit the mean-reverting behavior of $M_t$. Note that this example is in-sample; for a true out-of-sample application see @Clegg.2018.
 
 We continue with using hedge.pci() to find the set of sector ETFs forming the best hedging portfolio for the SPY index (S&P500 index).
 
@@ -232,11 +246,12 @@ Thereby, the R code,
 
 results in the subsequent output: 
 ````
-  -LL   LR[rw]    p[rw]    p[mr]      rho  R^2[MR]      Factor |   Factor coefficients
- 2320.00 -23.3743   0.0100   0.0100   0.5759   0.4526      XLI |   3.1106 
- 1765.50 -46.5925   0.0100   0.0100   0.3170   0.4713      XLY |   1.8951  1.1989 
- 1494.95 -53.7256   0.0100   0.0100   0.3244   0.5038      XLV |   1.6999  0.9106  0.6619 
-  972.58 -65.9058   0.0100   0.0100   0.4060   0.5904      XLK |   1.3089  0.4933  0.5320. 1.5182 
+-LL     LR[rw]  p[rw]   p[mr]  rho  R^2[MR] Fac.| Factor coefficients
+2521.2 -19.281  0.000  0.000  0.593  0.407  XLI | 3.033 
+1891.8 -41.011  0.000  0.000  0.350  0.435  XLY | 1.848 1.182 
+1558.8 -47.619  0.000  0.000  0.350  0.461  XLV | 1.627 0.915 0.679 
+1302.6 -52.992  0.000  0.000  0.350  0.483  XLU | 1.490 0.895 0.596 0.583 
+ 724.5 -64.165  0.000  0.000  0.382  0.552  XLK | 1.209 0.544 0.479 0.491 1.265.  
 ````
 The table summarizes information about the best hedging portfolio, where each row corresponds to an increasing number of factors.  Row 1: The best single-factor hedging portfolio comprises XLI (industrials) as only factor. Row 2: The best two-factor hedging portfolio consists of XLI and XLY (consumer discretionary). As such, XLY leads to the best improvement of the LRT score among all remaining factors. Row 3 includes XLV (health care) for the three-factor portfolio and row 4 XLK (technology) for the best four-factor portfolio. The last row corresponds to the overall best fit out of the nine potential sector ETFs, based on the LRT score. Note that for all rows, the union of random walk and AR(1)-null hypothesis is rejected at the 5 percent significant level, so we find a PCI model at each step. 
 

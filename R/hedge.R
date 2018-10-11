@@ -125,7 +125,7 @@ hedge.pci <- function (Y, X,
     #
     #  Fits the model
     #
-    #  Y[t] = alpha + beta[1] X_i1[t,1] + beta[2] X_i2[t,2] + ... + beta [m] X_iM[t,k]
+    #  Y[t] = beta[1] X_i1[t,1] + beta[2] X_i2[t,2] + ... + beta [m] X_iM[t,k]
     #    + m[t] + r[t]
 	#
 	# where
@@ -259,20 +259,24 @@ multihedge.pci.general <- function (
   
   I <- c()
   #   debug (find_factor)
+
+ 
+  
+
   score <- 0
   pci.fit <- NULL
   while (length(I) < maxfact && (length(I) < ncol(X))) {
     Inew <- find_factor(I)
     if (length(Inew) == length(I)) break
-    pci.fit <- fit.pci(Y, X[,Inew,drop=FALSE], lambda=lambda, ...)
+    pci.fit <- fit.pci(Y, X[,Inew,drop=FALSE], lambda=lambda , ... )
     tr <- test.pci(Y, X[,Inew,drop=FALSE], null_hyp="rw", ...)
-    tm <- test.pci(Y, X[,Inew,drop=FALSE], null_hyp="ar1", ...)
+    tm <- test.pci(Y, X[,Inew,drop=FALSE], null_hyp="ar1"  , ...)
     score.new <- factor_score(Inew)
     if ((length(I) > 0) && !is.na(minimum.stepsize) && 
         (score.new + minimum.stepsize > score)) break;
     if (verbose) {
       cat(sprintf("%8.2f %8.4f %8.4f %8.4f %8.4f %8.4f %8s | ", pci.fit$negloglik, score.new,
-                  tr$p.value, tm$p.value,
+              tr$p.value, tm$p.value,
                   pci.fit$rho, pci.fit$pvmr, colnames(X)[Inew[length(Inew)]]))
       for (j in 1:length(Inew)) {
         betaj_str <- paste("beta_", colnames(X)[Inew[j]], sep="")
@@ -306,7 +310,7 @@ multihedge.pci.lasso <- function (
   # Uses the lasso to search for a hedge of Y in terms of securities
   # from X that is significant as an PCI model.  
   
-  lasso <- glmnet(X, Y)
+  lasso <- glmnet(X,Y)
   
   find_branches <- function (I) {
     # On input, I is a collection of indexes.  For each index j not in I,
